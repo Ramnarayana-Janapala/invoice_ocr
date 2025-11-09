@@ -117,20 +117,14 @@ Visit [ollama.ai](https://ollama.ai) and download for macOS.
 ```bash
 # In another terminal
 ollama serve        # Start Ollama server
-
 # In another terminal, download models
-ollama pull llama2
 ollama pull mistral
-ollama pull neural-chat
 ```
 
 ### Verify Connection
 ```bash
 just check-ollama          # with just
-python src/scripts/test_ollama.py  # manual
 ```
-
-## 🆘 Troubleshooting
 
 ### Issue: "PaddleOCR models not found"
 ```bash
@@ -142,13 +136,4 @@ just test
 ```bash
 # Make sure Ollama is running
 ollama serve
-
-# In another terminal, check status
-make check-ollama
-```
-
-### Issue: "No module named paddleocr"
-```bash
-# Reinstall dependencies
-uv sync --fresh
 ```
