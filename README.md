@@ -28,15 +28,10 @@ A Python application for OCR (Optical Character Recognition) using PaddleOCR wit
 ### 1. Clone and Navigate
 ```bash
 git clone <your-repo>
-cd paddleocr-project
 ```
 
 ### 2. Full Setup (Recommended)
 ```bash
-# Using make
-make setup
-
-# Or using just
 just setup
 ```
 
@@ -48,23 +43,12 @@ This will:
 
 ### 3. Run OCR
 ```bash
-make run              # Using make
-# or
 just run             # Using just
 ```
 
 ## 📚 Installation Methods
 
-### Option A: Makefile (Traditional)
-```bash
-make help              # See all commands
-make install           # Install dependencies
-make dev               # Install with dev tools
-make setup-models      # Download models
-make check-ollama      # Test Ollama
-```
-
-### Option B: justfile (Modern, Recommended)
+### justfile
 ```bash
 just help             # See all commands
 just install          # Install dependencies
@@ -113,28 +97,6 @@ paddleocr-app check    # System config and service health
 paddleocr-app info     # Application configuration
 ```
 
-### Python API
-
-```python
-from paddleocr_app import create_ocr_engine, create_ollama_client
-from pathlib import Path
-
-# Initialize OCR
-ocr = create_ocr_engine(language="en")
-
-# Process image
-results = ocr.process_image(Path("photo.jpg"))
-
-# Get full text
-text = ocr.extract_full_text(Path("photo.jpg"))
-
-# Optional: Post-process with LLM
-ollama = create_ollama_client()
-if ollama.health_check():
-    corrected = ollama.correct_ocr_errors(text)
-    summarized = ollama.summarize_ocr_text(text)
-```
-
 ## ⚙️ Configuration
 
 ### Environment Variables
@@ -157,26 +119,11 @@ LOG_LEVEL=INFO
 DATA_DIR=./data
 ```
 
-### Python Configuration
-```python
-from paddleocr_app import get_config
-
-config = get_config()
-print(config.ocr.language)
-print(config.ollama.model)
-```
-
 ## 🧪 Testing
 
 ```bash
 # Run all tests
-make test          # with make
-just test          # with just
-uv run pytest      # manual
-
-# With coverage report
-uv run pytest --cov=paddleocr_app --cov-report=html
-# Open htmlcov/index.html
+just test  
 ```
 
 ## 🔍 Ollama Setup
@@ -197,66 +144,14 @@ ollama pull neural-chat
 
 ### Verify Connection
 ```bash
-make check-ollama          # with make
 just check-ollama          # with just
 python src/scripts/test_ollama.py  # manual
 ```
-
-## 📁 Project Structure
-
-```
-paddleocr-project/
-├── pyproject.toml              # Project config with dependencies
-├── uv.lock                     # Lock file for reproducibility
-├── Makefile                    # Traditional task runner
-├── justfile                    # Modern task runner
-├── .env.example                # Configuration template
-├── README.md
-│
-├── src/
-│   ├── paddleocr_app/
-│   │   ├── __init__.py
-│   │   ├── ocr.py             # PaddleOCR wrapper
-│   │   ├── ollama_client.py   # Ollama integration
-│   │   ├── config.py          # Configuration management
-│   │   └── cli.py             # CLI with Typer
-│   │
-│   └── scripts/
-│       ├── setup_models.py     # Download and cache models
-│       └── test_ollama.py      # Test Ollama connection
-│
-├── tests/
-│   ├── __init__.py
-│   └── test_config.py          # Sample tests
-│
-├── config/
-│   └── settings.yaml           # App configuration (optional)
-│
-└── data/
-    ├── input/                  # Input images
-    ├── output/                 # OCR results
-    └── models/                 # Cached models
-```
-
-## 🔧 Common Commands
-
-| Task | Make | Just | Manual |
-|------|------|------|--------|
-| Full setup | `make setup` | `just setup` | See above |
-| Install deps | `make install` | `just install` | `uv sync` |
-| Download models | `make setup-models` | `just setup-models` | `python src/scripts/setup_models.py` |
-| Run tests | `make test` | `just test` | `uv run pytest` |
-| Format code | `make format` | `just format` | `uv run black src/` |
-| Lint | `make lint` | `just lint` | `uv run ruff check src/` |
-| Clean cache | `make clean` | `just clean` | `find . -name __pycache__ -delete` |
 
 ## 🆘 Troubleshooting
 
 ### Issue: "PaddleOCR models not found"
 ```bash
-# Re-download models
-make setup-models
-# or
 just setup-models
 ```
 
@@ -274,76 +169,3 @@ make check-ollama
 # Reinstall dependencies
 uv sync --fresh
 ```
-
-### Issue: Apple Silicon performance slow
-- Models are cached in `~/.paddleocr/models` after first run
-- CPU optimization (MKLDNN) is enabled by default
-- GPU is disabled by default (not available for Ollama on Apple Silicon)
-
-## 📦 Dependencies
-
-### Core
-- **paddleocr**: OCR engine
-- **paddlepaddle**: ML framework
-- **opencv-python**: Image processing
-- **pillow**: Image handling
-
-### Integration
-- **requests**: HTTP client for Ollama
-- **typer**: CLI framework
-- **rich**: Terminal UI
-
-### Configuration
-- **pydantic**: Settings validation
-- **python-dotenv**: Environment management
-
-### Development
-- **pytest**: Testing
-- **black**: Code formatting
-- **ruff**: Linting
-- **mypy**: Type checking
-
-## 🚢 Deployment
-
-### Docker (Optional)
-```bash
-docker build -t paddleocr-app .
-docker run -v $(pwd)/data:/app/data paddleocr-app
-```
-
-### Cloud/Server
-Since models are cached after first run, distribute the cached models:
-```bash
-# Copy this directory to production
-~/.paddleocr/models
-```
-
-## 📝 Contributing
-
-1. Fork and clone
-2. Create feature branch: `git checkout -b feature/xyz`
-3. Format code: `make format`
-4. Run tests: `make test`
-5. Push and create pull request
-
-## 📄 License
-
-MIT License - see LICENSE file for details
-
-## 🤝 Support
-
-- **GitHub Issues**: Report bugs and request features
-- **Documentation**: See docstrings in source code
-- **PaddleOCR**: https://github.com/PaddlePaddle/PaddleOCR
-- **Ollama**: https://ollama.ai
-
-## 🎓 Learn More
-
-- [PaddleOCR Documentation](https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.7/README.md)
-- [Ollama Models](https://ollama.ai/library)
-- [uv Documentation](https://github.com/astral-sh/uv)
-- [justfile Guide](https://just.systems/)
-
----
-
-**Built for Apple Silicon • Optimized for Offline Use • LLM-Enhanced**
