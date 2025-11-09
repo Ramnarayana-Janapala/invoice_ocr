@@ -7,7 +7,7 @@ A Python application for OCR (Optical Character Recognition) using PaddleOCR wit
 - **PaddleOCR Integration**: Fast, accurate OCR with multilingual support
 - **Apple Silicon Native**: Optimized for ARM64 processors
 - **Ollama Integration**: Post-process OCR results with local LLMs
-- **Cross-Platform**: Reproducible setup across machines with `uv`, `make`, and `just`
+- **Cross-Platform**: Reproducible setup across machines with `uv` and `just`
 - **CLI & Python API**: Command-line interface and programmatic access
 - **Batch Processing**: Process multiple images efficiently
 - **Configuration Management**: Environment-based configuration with `.env` support
@@ -21,7 +21,7 @@ A Python application for OCR (Optical Character Recognition) using PaddleOCR wit
 
 ### Optional
 - [Ollama](https://ollama.ai) - For LLM features (highly recommended)
-- [Make](https://www.gnu.org/software/make/) or [just](https://github.com/casey/just) - Task runners
+- [just](https://github.com/casey/just) - Task runners
 
 ## 🚀 Quick Start
 
@@ -55,9 +55,10 @@ just install          # Install dependencies
 just dev              # Install with dev tools
 just setup-models     # Download models
 just check-ollama     # Test Ollama
+just clean-all        # Clean the environment
 ```
 
-### Option C: Manual with uv
+###Manual with uv
 ```bash
 # Install with uv
 uv sync                # Install dependencies
@@ -72,29 +73,10 @@ python src/scripts/test_ollama.py
 
 ## 🖼️ Usage
 
-### Command Line Interface
-
-#### Process Single Image
+#### RUN Examples
 ```bash
-paddleocr-app process --image photo.jpg --language en
-# or
-uv run python -m paddleocr_app.cli process --image photo.jpg
-```
-
-#### Process with LLM Correction
-```bash
-paddleocr-app process --image photo.jpg --use-llm
-```
-
-#### Batch Process
-```bash
-paddleocr-app batch --input-dir ./images --pattern "*.jpg"
-```
-
-#### Check System
-```bash
-paddleocr-app check    # System config and service health
-paddleocr-app info     # Application configuration
+just run
+just run-model
 ```
 
 ## ⚙️ Configuration
@@ -153,6 +135,7 @@ python src/scripts/test_ollama.py  # manual
 ### Issue: "PaddleOCR models not found"
 ```bash
 just setup-models
+just test
 ```
 
 ### Issue: "Ollama connection refused"
