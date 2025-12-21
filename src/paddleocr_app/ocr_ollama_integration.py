@@ -39,8 +39,37 @@ ANSWER:"""
         "temperature": 0.7
     }
 
-    response = requests.post(OLLAMA_URL, json=payload)
-    return response.json()['response']
+    try:
+        response = requests.post(OLLAMA_URL, json=payload, timeout=120)
+        response.raise_for_status()  # Raise an exception for bad status codes
+        
+        result = response.json()
+        
+        # Handle different response formats
+        if 'response' in result:
+            return result['response']
+        elif 'message' in result:
+            # Some Ollama versions use 'message' instead of 'response'
+            if isinstance(result['message'], dict):
+                return result['message'].get('content', str(result))
+            return str(result['message'])
+        else:
+            # Fallback: return the whole response as string
+            raise ValueError(f"Unexpected response format from Ollama. Keys: {list(result.keys())}. Full response: {result}")
+            
+    except requests.exceptions.ConnectionError:
+        raise ConnectionError(
+            f"Could not connect to Ollama at {OLLAMA_URL}. "
+            "Make sure Ollama is running: 'ollama serve'"
+        )
+    except requests.exceptions.Timeout:
+        raise TimeoutError(f"Request to Ollama timed out after 120 seconds")
+    except requests.exceptions.HTTPError as e:
+        error_text = response.text if hasattr(response, 'text') else 'N/A'
+        raise ValueError(f"Ollama API error: {e}. Response: {error_text}")
+    except json.JSONDecodeError as e:
+        error_text = response.text if hasattr(response, 'text') else 'N/A'
+        raise ValueError(f"Invalid JSON response from Ollama: {error_text}")
 
 
 @app.command()
